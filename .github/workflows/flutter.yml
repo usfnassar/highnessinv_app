@@ -1,0 +1,30 @@
+name: Build Flutter APK
+
+on:
+  push:
+    branches:
+      - Develop
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+      - name: Get dependencies
+        run: flutter pub get
+      - name: Build APK
+        run: flutter build apk --release
+      - name: Upload APK assets
+        uses: ncipollo/release-action@v1
+        with:
+          name: app-release.apk
+          artifacts: "build/app/outputs/flutter-apk/app-release.apk"
+          tag: v0.0.${{ github.run_number }}
